@@ -9,9 +9,10 @@ import type { IAlbum, ITrack } from '../types/types';
 // interfaces
 interface IProps {
   children: React.ReactNode;
+  albums: IAlbum[];
 }
 
-const TrackProvider: React.FC<IProps> = ({ children }) => {
+const TrackProvider: React.FC<IProps> = ({ children, albums }) => {
   const audioRef = useRef<HTMLAudioElement>(null!);
 
   const [volume, setVolume] = useState<number>(0.5);
@@ -24,7 +25,19 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
   const [currentState, setCurrentState] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<ITrack | null>(null);
   const [currentAlbum, setCurrentAlbum] = useState<IAlbum | null>(null);
+  const [queuedAlbum, setQueuedAlbum] = useState<IAlbum | null>(null);
+  const [albumTrackIndices, setAlbumTrackIndices] = useState<Record<string, number>>({}); // Store last played index for each album
 
+  // Initialize albumTrackIndices for all albums
+  useEffect(() => {
+    const initialIndices: Record<string, number> = {};
+    albums.forEach((album) => {
+      initialIndices[album.id] = -1; // Start at -1 (no track played yet)
+    });
+    setAlbumTrackIndices(initialIndices);
+  }, [albums]);
+
+  // Update prev/next tracks when currentTrack or currentAlbum changes
   useEffect(() => {
     if (currentAlbum?.tracks) {
       const currentIndex = currentAlbum.tracks.findIndex((track) => track.id === currentTrack?.id);
@@ -40,34 +53,66 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
     }
   }, [currentAlbum, currentTrack?.id]);
 
-  /**
-   * Adds a track and album to the current state and sets the state to 'playing'.
-   *
-   * @param {ITrack} track - The track to be added.
-   * @param {IAlbum} album - The album containing the track.
-   * @returns {void}
-   */
+  // Keyboard event listener for Q, W, E, R during the last 5 seconds
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (trackDuration && currentProgress >= trackDuration - 5) {
+        let selectedAlbum: IAlbum | undefined;
+
+        switch (e.key.toUpperCase()) {
+          case 'Q':
+            selectedAlbum = albums.find((album) => album.name === 'Relaxation');
+            break;
+          case 'W':
+            selectedAlbum = albums.find((album) => album.name === 'Focus');
+            break;
+          case 'E':
+            selectedAlbum = albums.find((album) => album.name === 'Stress');
+            break;
+          case 'R':
+            selectedAlbum = albums.find((album) => album.name === 'Memory');
+            break;
+          default:
+            return;
+        }
+
+        if (selectedAlbum) {
+          setQueuedAlbum(selectedAlbum);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [currentProgress, trackDuration, albums]);
+
+  
   const addItem = (track: ITrack, album: IAlbum): void => {
     setCurrentTrack(track);
     setCurrentAlbum(album);
-  };
 
-  /**
-   * Changes the current state to the provided state.
-   *
-   * @param {string} state - The new state to be set.
-   * @returns {void}
-   */
+    // Check if tracks exists before accessing findIndex
+    if (album.tracks) {
+      const currentIndex = album.tracks.findIndex((t) => t.id === track.id);
+      setAlbumTrackIndices((prev) => ({
+        ...prev,
+        [album.id]: currentIndex,
+      }));
+    } else {
+      setAlbumTrackIndices((prev) => ({
+        ...prev,
+        [album.id]: -1, // Default to -1 if no tracks
+      }));
+    }
+};
+
   const changeState = (state: string): void => {
     setCurrentState(state);
   };
 
-  /**
-   * Handles the play functionality for the audio element.
-   * Plays the audio if the audioRef is defined and the current audio element is available.
-   *
-   * @returns {void}
-   */
   const handlePlay = (): void => {
     const audioElement = audioRef?.current;
 
@@ -88,19 +133,11 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
     };
   }, [currentTrack]);
 
-  /**
-   * Handles play and pause functionality for the audio player.
-   *
-   * @param {ITrack} track - The track to be played or paused.
-   * @param {IAlbum} album - The album containing the track.
-   * @returns {void}
-   */
   const handlePlayPause = (track: ITrack, album: IAlbum): void => {
     const audioElement = audioRef?.current;
 
     if (currentTrack?.id !== track.id) {
       addItem(track, album);
-
       audioElement?.load();
     } else if (currentState === 'playing') {
       audioElement?.pause();
@@ -109,46 +146,34 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
     }
   };
 
-  /**
-   * Handles the event when the current track ends.
-   * If there is a next track and a current album, it plays the next track.
-   * Otherwise, it removes the current item and resets the track duration and current progress.
-   */
+
+  
+
+
   const handleOnEnded = (): void => {
-    if (nextTrack && currentAlbum) {
+    if (queuedAlbum && queuedAlbum.tracks && queuedAlbum.tracks.length > 0) {
+      const lastPlayedIndex = albumTrackIndices[queuedAlbum.id] ?? -1;
+      const nextIndex = (lastPlayedIndex + 1) % queuedAlbum.tracks.length;
+      const nextTrackFromQueuedAlbum = queuedAlbum.tracks[nextIndex];
+      handlePlayPause(nextTrackFromQueuedAlbum, queuedAlbum);
+      setQueuedAlbum(null);
+    } else if (nextTrack && currentAlbum && currentAlbum.tracks && currentAlbum.tracks.length > 0) {
       handlePlayPause(nextTrack, currentAlbum);
     } else {
       setCurrentProgress(0);
     }
   };
 
-  /**
-   * Handles the event when the metadata of the audio is loaded.
-   * Sets the track duration using the duration of the audio element.
-   */
   const handleOnLoadedMetaData = (): void => {
     if (audioRef?.current) {
       setTrackDuration(audioRef.current.duration);
     }
   };
 
-  /**
-   * Handles the event when the audio element can start playing.
-   * Sets the volume of the audio element to the current volume state.
-   *
-   * @param {React.SyntheticEvent<HTMLAudioElement>} e - The synthetic event triggered by the audio element.
-   * @returns {void}
-   */
   const handleOnCanPlay = (e: React.SyntheticEvent<HTMLAudioElement>): void => {
     e.currentTarget.volume = volume;
   };
 
-  /**
-   * Handles the volume change event.
-   * Sets the volume of the audio element and updates the muted state if the volume is set to 0.
-   *
-   * @param {number} volumeValue - The new volume value to be set.
-   */
   const handleVolumeChange = (volumeValue: number): void => {
     if (audioRef?.current) {
       setVolume(volumeValue);
@@ -165,10 +190,6 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
     }
   };
 
-  /**
-   * Handles the mute change event.
-   * Toggles the muted state and sets the volume of the audio element accordingly.
-   */
   const handleMuteChange = (): void => {
     if (audioRef?.current) {
       const audioElement = audioRef.current;
@@ -191,12 +212,6 @@ const TrackProvider: React.FC<IProps> = ({ children }) => {
     }
   };
 
-  /**
-   * Handles the progress change event.
-   * Updates the current progress of the audio element and sets the current time accordingly.
-   *
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event triggered by the progress input.
-   */
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (audioRef?.current) {
       const audioElement = audioRef.current;

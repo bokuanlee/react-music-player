@@ -1,9 +1,30 @@
 [
   {
+    "id": "undh20",
+    "name": "Louis Armstrong",
+    "image": "/images/Louis Armstrong.png",
+    "description": "Louis Armstrong (1901~1971), aka \"Satchmo,\" was a legendary American jazz trumpeter and singer from New Orleans. Known for his improvisation and hits like \"What a Wonderful World,\" he became a global icon, shaping jazz in the 1920s and beyond.",
+    "monthlyListeners": "5M"
+  },
+  {
+    "id": "undh21",
+    "name": "Multiple Artists",
+    "image": "/images/Lofi.png",
+    "description": "Ranging from emotive solo pieces to atmospheric compositions. Artists like Daniel Páal ('Above the Surface'), Blue Mark ('Jubel'), Maxence Cyrin ('Efteraar'), and Hermione highlight its expressive depth, blending classical influences with modern ambient and cinematic styles.",
+    "monthlyListeners": "5M"
+  },
+  {
+    "id": "undh22",
+    "name": "Pink Floyd",
+    "image": "/images/Pink Floyd.png",
+    "description": "Pink Floyd, formed in 1965 in London, is a legendary British rock band known for their psychedelic sound and concept albums like \"The Dark Side of the Moon.\" Led by Syd Barrett and later David Gilmour, they shaped progressive rock with innovative music and visuals.",
+    "monthlyListeners": "5M"
+  },
+  {
     "id": "undh23",
-    "name": "Slayer",
-    "image": "https://i.scdn.co/image/643c0c72a9e44c2b65f0b9af158f525d55a15988",
-    "description": "Slayer were one of the most distinctive, influential, and extreme thrash metal bands of the 1980s. Their graphic lyrics dealt with...",
+    "name": "The Beatles",
+    "image": "/images/The Beatles.png",
+    "description": "The Beatles, formed in 1960 in Liverpool, are an iconic British rock band known for hits like \"Yesterday\" and albums like \"Sgt. Pepper's.\" Featuring John Lennon, Paul McCartney, George Harrison, and Ringo Starr, they revolutionized music and pop culture.",
     "monthlyListeners": "5M"
   }
 ]

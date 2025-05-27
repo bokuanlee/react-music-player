@@ -47,14 +47,7 @@ const TrackLine: React.FC<IProps> = ({
       <button type='button' className='name-button' onClick={handlePlayPause}>
         {track.name}
       </button>
-      <div className='flex flex-gap-small flex-v-center'>
-        {track.explicit && (
-          <span className='material-symbols-outlined' title='Explicit'>
-            explicit
-          </span>
-        )}
-        <em>{track.playcount} Plays</em>
-      </div>
+      
     </div>
     <span>{track.duration}</span>
   </div>

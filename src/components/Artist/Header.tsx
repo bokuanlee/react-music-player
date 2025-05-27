@@ -27,27 +27,9 @@ const Header: React.FC<IProps> = ({ artist }) => {
       className='artist-cover flex flex-column flex-h-end'
     >
       <div className='artist-gradient'>
-        <Search />
         <div className='container'>
-          <h1 className='text-shadow'>{artist.name}</h1>
-          <p className='text-shadow'>{artist.description}</p>
-          <div className='buttons flex flex-gap-small flex-h-center flex-v-center'>
-            <span className='flex flex-1 flex-h-start text-shadow'>
-              {artist.monthlyListeners} monthly listeners
-            </span>
-            <div className='flex flex-1 flex-gap-medium flex-h-end flex-v-center'>
-              <button type='button' className='button black active-opacity'>
-                Radio
-              </button>
-              <button
-                type='button'
-                className='button black active-opacity'
-                onClick={() => handleFollow()}
-              >
-                {follow ? 'Following' : 'Follow'}
-              </button>
-            </div>
-          </div>
+          <h1 className='text-shadow'>MindSync Music!</h1>
+          <p className='text-shadow'>Welcome to our innovative music player! We detect your EEG data to analyze your mental state, dynamically selecting the perfect music to match—relaxing tunes for calmness, focused beats for concentration, intense tracks for stress relief, or nostalgic melodies for memory. Experience a personalized audio journey tailored to your mind.</p>
         </div>
       </div>
     </section>

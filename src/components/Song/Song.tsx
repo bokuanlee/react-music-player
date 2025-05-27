@@ -16,6 +16,10 @@ interface IProps {
 const Song: React.FC<IProps> = ({ album, track, playing }) => {
   const { handlePlayPause } = useTrack();
 
+  // if (!playing) {
+  //   return null;
+  // }
+
   return (
     <Link
       to={`/album/${album.id}`}
@@ -41,9 +45,7 @@ const Song: React.FC<IProps> = ({ album, track, playing }) => {
           <div className='artist-name flex flex-1'>
             <span>{album.artist.name}</span>
           </div>
-          <div className='play-count flex flex-1'>
-            <span>{track.playcount} plays</span>
-          </div>
+          
           <div className='album-name flex flex-2 flex-h-end'>
             <span>{album.name}</span>
           </div>

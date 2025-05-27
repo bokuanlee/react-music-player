@@ -10,8 +10,10 @@ import Navigation from './navigation/Navigation';
 // providers
 import TrackProvider from './providers/TrackProvider';
 
+import albumsData from './data/albumData.json'; // Import your albums data
+
 const App: React.FC = () => (
-  <TrackProvider>
+  <TrackProvider albums={albumsData}>
     <Player />
     <Navigation />
   </TrackProvider>

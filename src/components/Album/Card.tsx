@@ -14,11 +14,7 @@ const Card: React.FC<IProps> = ({ album }) => (
     <div className='card-info flex flex-column flex-gap-small'>
       <strong>{album.name}</strong>
       <div className='flex flex-gap-small flex-h-center flex-v-center'>
-        {album.explicit && (
-          <span className='material-symbols-outlined' title='Explicit'>
-            explicit
-          </span>
-        )}
+        
         <span>
           {album.year} - {album.songs} songs
         </span>

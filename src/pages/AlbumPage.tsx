@@ -32,7 +32,7 @@ const AlbumPage: React.FC = () => {
 
   return (
     <Cover image={currentAlbumData.image}>
-      <Search />
+      
       <Information album={currentAlbumData} />
     </Cover>
   );

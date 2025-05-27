@@ -17,11 +17,7 @@ const Details: React.FC<IProps> = ({ album }) => (
     </h1>
     <h2>{album.name}</h2>
     <div className='album-info flex flex-gap-small flex-v-center'>
-      {album.explicit && (
-        <span className='material-symbols-outlined' title='Explicit'>
-          explicit
-        </span>
-      )}
+      
       <em>
         {album.year} - {album.songs} Songs - {album.minutes} Minutes
       </em>
