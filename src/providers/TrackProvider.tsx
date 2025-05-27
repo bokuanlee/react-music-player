@@ -53,10 +53,10 @@ const TrackProvider: React.FC<IProps> = ({ children, albums }) => {
     }
   }, [currentAlbum, currentTrack?.id]);
 
-  // Keyboard event listener for Q, W, E, R during the last 5 seconds
+  // Keyboard event listener for Q, W, E, R during the second half
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (trackDuration && currentProgress >= trackDuration - 5) {
+      if (trackDuration && currentProgress >= trackDuration/2 ) {
         let selectedAlbum: IAlbum | undefined;
 
         switch (e.key.toUpperCase()) {
